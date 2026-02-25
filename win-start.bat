@@ -135,7 +135,12 @@ if not exist "%TRAY_EXE%" (
             for /f "delims=" %%i in ('dir /b /s "%WINDIR%\Microsoft.NET\Framework\csc.exe" 2^>nul') do set "CSC=%%i"
         )
         if not "!CSC!"=="" (
-            "!CSC!" /nologo /target:winexe /out:"%TRAY_EXE%" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll "%TRAY_SRC%" >nul 2>&1
+            "!CSC!" /nologo /target:winexe /out:"%TRAY_EXE%" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll "%TRAY_SRC%"
+            if not exist "%TRAY_EXE%" (
+                echo ❌ 트레이 앱 빌드 실패
+            )
+        ) else (
+            echo ❌ C# 컴파일러를 찾을 수 없습니다
         )
     )
 )
