@@ -290,17 +290,17 @@ class ClaudeBotTray : Form
         if (!hasEnv)
         {
             trayIcon.Icon = Icon.FromHandle(CreateIcon(Color.Orange).GetHicon());
-            trayIcon.Text = L("Claude Bot: Setup Required", "Claude Bot: 설정 필요");
+            trayIcon.Text = L("Claude Discord Bot: Setup Required", "Claude Discord Bot: 설정 필요");
         }
         else if (running)
         {
             trayIcon.Icon = Icon.FromHandle(CreateIcon(Color.LimeGreen).GetHicon());
-            trayIcon.Text = L("Claude Bot: Running", "Claude Bot: 실행 중");
+            trayIcon.Text = L("Claude Discord Bot: Running", "Claude Discord Bot: 실행 중");
         }
         else
         {
             trayIcon.Icon = Icon.FromHandle(CreateIcon(Color.Red).GetHicon());
-            trayIcon.Text = L("Claude Bot: Stopped", "Claude Bot: 중지됨");
+            trayIcon.Text = L("Claude Discord Bot: Stopped", "Claude Discord Bot: 중지됨");
         }
     }
 
@@ -392,7 +392,7 @@ class ClaudeBotTray : Form
                 try { File.Delete(vbs); } catch { }
                 UpdateStatus();
                 BuildMenu();
-                trayIcon.BalloonTipTitle = L("Claude Bot Started", "Claude Bot 시작됨");
+                trayIcon.BalloonTipTitle = L("Claude Discord Bot Started", "Claude Discord Bot 시작됨");
                 trayIcon.BalloonTipText = L("Bot is running. Click tray icon to manage.",
                                              "봇이 실행 중입니다. 트레이 아이콘을 클릭하여 관리하세요.");
                 trayIcon.BalloonTipIcon = ToolTipIcon.Info;
