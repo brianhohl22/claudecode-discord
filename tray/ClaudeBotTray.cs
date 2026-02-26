@@ -206,17 +206,7 @@ class ClaudeBotTray : Form
                 "if exist \"" + trayExe + "\" (\r\n" +
                 "    start \"\" \"" + trayExe + "\" --show\r\n" +
                 ")\r\n" +
-                ":: Start bot if it was running\r\n";
-
-            if (wasRunning)
-            {
-                batContent +=
-                    "timeout /t 2 /nobreak >nul\r\n" +
-                    "echo Set ws = CreateObject(\"WScript.Shell\") > \"" + botDir + "\\.bot-start.vbs\"\r\n" +
-                    "echo ws.Run \"cmd /c cd /d " + botDir + " ^& echo running^> .bot.lock ^& node dist/index.js ^>^> bot.log 2^>^&1 ^& del .bot.lock\", 0, False >> \"" + botDir + "\\.bot-start.vbs\"\r\n" +
-                    "wscript \"" + botDir + "\\.bot-start.vbs\"\r\n" +
-                    "del \"" + botDir + "\\.bot-start.vbs\" >nul 2>&1\r\n";
-            }
+                ":: Bot will be auto-started by tray app on launch\r\n";
 
             batContent += "del \"" + updateBat + "\" >nul 2>&1\r\n";
 
@@ -435,28 +425,28 @@ class ClaudeBotTray : Form
 
     private void KillBot()
     {
-        // Kill node processes running dist/index.js
-        try
-        {
-            var proc = new Process();
-            proc.StartInfo.FileName = "wmic";
-            proc.StartInfo.Arguments = "process where \"commandline like '%dist/index.js%' and name='node.exe'\" call terminate";
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.Start();
-            proc.WaitForExit();
-        }
-        catch { }
-        // Also try taskkill for cmd windows
+        // Kill node.exe processes running dist/index.js
         try
         {
             var proc = new Process();
             proc.StartInfo.FileName = "cmd.exe";
-            proc.StartInfo.Arguments = "/c for /f \"tokens=2\" %a in ('tasklist /fi \"windowtitle eq ClaudeDiscordBot\" /fo list 2^>nul ^| findstr \"PID\"') do taskkill /pid %a /f >nul 2>&1";
+            proc.StartInfo.Arguments = "/c wmic process where \"commandline like '%dist/index.js%' and name='node.exe'\" call terminate >nul 2>&1";
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.CreateNoWindow = true;
             proc.Start();
-            proc.WaitForExit();
+            proc.WaitForExit(5000);
+        }
+        catch { }
+        // Kill associated cmd.exe processes (the hidden shells wrapping the bot)
+        try
+        {
+            var proc = new Process();
+            proc.StartInfo.FileName = "cmd.exe";
+            proc.StartInfo.Arguments = "/c wmic process where \"commandline like '%dist/index.js%' and name='cmd.exe'\" call terminate >nul 2>&1";
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.CreateNoWindow = true;
+            proc.Start();
+            proc.WaitForExit(5000);
         }
         catch { }
         string lockFile = Path.Combine(botDir, ".bot.lock");
