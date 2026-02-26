@@ -1049,6 +1049,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Bot Controls
 
     @objc private func startBot() {
+        runShell("launchctl unload '\(plistDst)' 2>/dev/null")
         generatePlist()
         runShell("launchctl load '\(plistDst)'")
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -1141,8 +1142,25 @@ class StatusDot: NSView {
 
 // MARK: - App Entry Point
 
-let app = NSApplication.shared
-app.setActivationPolicy(.accessory)
+// Kill any existing ClaudeBotMenu instances (prevent duplicates)
+let myPid = ProcessInfo.processInfo.processIdentifier
+let runningApps = NSWorkspace.shared.runningApplications
+for app in runningApps {
+    if let name = app.executableURL?.lastPathComponent, name == "ClaudeBotMenu",
+       app.processIdentifier != myPid {
+        app.terminate()
+    }
+}
+// Also pkill in case NSWorkspace doesn't catch all
+let killTask = Process()
+killTask.launchPath = "/bin/bash"
+killTask.arguments = ["-c", "pgrep -f ClaudeBotMenu | grep -v \(myPid) | xargs kill 2>/dev/null"]
+try? killTask.run()
+killTask.waitUntilExit()
+Thread.sleep(forTimeInterval: 0.3)
+
+let application = NSApplication.shared
+application.setActivationPolicy(.accessory)
 let delegate = AppDelegate()
-app.delegate = delegate
-app.run()
+application.delegate = delegate
+application.run()
