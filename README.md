@@ -262,12 +262,17 @@ On Linux, you can run the bot as a systemd user service with an optional system 
 ./linux-start.sh --fg     # Foreground mode (for debugging)
 ```
 
+<p align="center">
+  <img src="docs/linux-tray.png" alt="Linux System Tray" width="350">
+</p>
+
 - **EN / KR language toggle** with persistent preference
 - First run without `.env` prompts GUI settings dialog
 - System tray icon: green (running) / red (stopped) / orange (setup needed), with start/stop/settings menu
 - GUI Settings dialog with folder browser (GTK3)
-- Version display and manual update from tray when updates available
+- Version display, check for updates, and one-click update from tray
 - Auto-restarts on crash, auto-starts on boot (via systemd)
+- Desktop shortcut created on first run
 - Tray requires `pip3 install pystray Pillow` (auto-installed on first run)
 - Works without GUI (headless server) — tray is skipped automatically
 
