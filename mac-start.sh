@@ -67,7 +67,7 @@ if [ "$1" = "--fg" ]; then
     VERSION=$(git describe --tags --always 2>/dev/null || echo "unknown")
     echo "[claude-bot] Current version: $VERSION"
     echo "[claude-bot] Checking for updates..."
-    git fetch origin main 2>/dev/null
+    git fetch origin main --tags 2>/dev/null
     LOCAL=$(git rev-parse HEAD 2>/dev/null)
     REMOTE=$(git rev-parse origin/main 2>/dev/null)
 

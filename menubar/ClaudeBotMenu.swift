@@ -103,7 +103,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func checkForUpdates() {
         DispatchQueue.global(qos: .background).async {
-            self.runShell("cd '\(self.botDir)' && git fetch origin main 2>/dev/null")
+            self.runShell("cd '\(self.botDir)' && git fetch origin main --tags 2>/dev/null")
             let local = self.runShell("cd '\(self.botDir)' && git rev-parse HEAD 2>/dev/null").trimmingCharacters(in: .whitespacesAndNewlines)
             let remote = self.runShell("cd '\(self.botDir)' && git rev-parse origin/main 2>/dev/null").trimmingCharacters(in: .whitespacesAndNewlines)
             let hasUpdate = !local.isEmpty && !remote.isEmpty && local != remote
@@ -144,7 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 runShell("launchctl unload '\(plistDst)' 2>/dev/null")
             }
 
-            let output = runShell("cd '\(botDir)' && git pull origin main && npm install --production && npm run build 2>&1")
+            let output = runShell("cd '\(botDir)' && git pull origin main --tags && npm install --production && npm run build 2>&1")
 
             currentVersion = getVersion()
             updateAvailable = false

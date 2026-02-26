@@ -108,7 +108,7 @@ def check_for_updates():
     global update_available, current_version
     try:
         current_version = get_version()
-        subprocess.run(["git", "fetch", "origin", "main"], capture_output=True, cwd=BOT_DIR)
+        subprocess.run(["git", "fetch", "origin", "main", "--tags"], capture_output=True, cwd=BOT_DIR)
         local = subprocess.run(
             ["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=BOT_DIR
         ).stdout.strip()
@@ -126,7 +126,7 @@ def perform_update(icon, item):
     if was_running:
         subprocess.run(["systemctl", "--user", "stop", SERVICE_NAME], capture_output=True)
 
-    subprocess.run(["git", "pull", "origin", "main"], cwd=BOT_DIR)
+    subprocess.run(["git", "pull", "origin", "main", "--tags"], cwd=BOT_DIR)
     subprocess.run(["npm", "install", "--production"], cwd=BOT_DIR)
     subprocess.run(["npm", "run", "build"], cwd=BOT_DIR)
 

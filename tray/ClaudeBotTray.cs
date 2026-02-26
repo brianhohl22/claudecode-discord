@@ -140,7 +140,7 @@ class ClaudeBotTray : Form
     {
         try
         {
-            RunCmdOutput("git", "-C \"" + botDir + "\" fetch origin main");
+            RunCmdOutput("git", "-C \"" + botDir + "\" fetch origin main --tags");
             string local = RunCmdOutput("git", "-C \"" + botDir + "\" rev-parse HEAD").Trim();
             string remote = RunCmdOutput("git", "-C \"" + botDir + "\" rev-parse origin/main").Trim();
             updateAvailable = !string.IsNullOrEmpty(local) && !string.IsNullOrEmpty(remote) && local != remote;
@@ -167,7 +167,7 @@ class ClaudeBotTray : Form
         }
 
         // git pull
-        RunCmdOutput("git", "-C \"" + botDir + "\" pull origin main");
+        RunCmdOutput("git", "-C \"" + botDir + "\" pull origin main --tags");
         // npm install & build
         RunCmd("cd /d \"" + botDir + "\" && npm install --production && npm run build", true);
 
