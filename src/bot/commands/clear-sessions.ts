@@ -5,9 +5,10 @@ import {
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
-import { getProject } from "../../db/database.js";
+import { getProject, upsertSession } from "../../db/database.js";
 import { findSessionDir } from "./sessions.js";
 import { L } from "../../utils/i18n.js";
+import { randomUUID } from "node:crypto";
 
 export const data = new SlashCommandBuilder()
   .setName("clear-sessions")
@@ -52,6 +53,9 @@ export async function execute(
       // skip files that can't be deleted
     }
   }
+
+  // Clear the session_id in the database so the bot doesn't try to resume a deleted session
+  upsertSession(randomUUID(), channelId, null, "idle");
 
   await interaction.editReply({
     embeds: [
